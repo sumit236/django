@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>All products</title>
+    {% extends 'base.html'%}
+</head>
+<body>
+{% block content %}
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-7"></div>
+    <div class="col-3">
+        <!--        <a href="{% url 'filterby_pubdate' %}" style="color: #095484">New <span class="oi oi-chevron-bottom"></span></a>-->
+        <table class="table table-bordered">
+            <tr>
+                <td  style="padding:10px">
+                    <a href="{% url 'filterby_pubdate' %}" style="color: #095484">New <span
+                            class="oi oi-chevron-bottom"></span></a>
+                </td>
+                <td  style="padding:10px">
+                    <a href="{% url 'filterby_upvote' %}" style="color: #095484">Trending <span
+                            class="oi oi-chevron-bottom"></span></a>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+</br>
+{% for product in products %}
+<div class="row" onclick="window.location='{% url 'details' product.id%}';" style="cursor: pointer;">
+    <div class="col-2">
+        <img src="{{ product.icon.url }}" class="img-fluid" height="100" width="100"/>
+    </div>
+    <div class="col-8">
+        <h5>Title: {{ product.title }}</h5>
+        <h6>Hunted by {{ product.hunter.username }}</h6>
+        <p style=" display: block; overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{ product.body }}</p>
+    </div>
+    <div class="col-2">
+        <!-- calling the hidden form created to increase the upvote.-->
+        <a href="javascript:{document.getElementById('upvote{{product.id}}').submit()}">
+            <button class="btn btn-primary btn-lg btn-block"><span class="oi oi-caret-top"></span> Upvote
+                {{product.votes_total}}
+            </button>
+        </a>
+    </div>
+</div>
+<br/>
+<!-- hidden form created. -->
+<form id="upvote{{product.id}}" method="POST" action="{% url 'upvote' product.id %}">
+    {% csrf_token %}
+    <input type="hidden"/>
+</form>
+{% endfor %}
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-8"></div>
+    <div class="col-2">
+        <table class="table table-bordered">
+            {% if products.has_other_pages %}
+            <tr>
+
+                <ul class="pagination">
+                    {% if products.has_previous %}
+                    <td>
+                        <a href="?page={{ products.previous_page_number }}">&laquo;</a>
+                    </td>
+                    {% else %}
+                    <td>
+                        <span class="disabled">&laquo;</span>
+                    </td>
+                    {% endif %}
+                    {% for i in products.paginator.page_range %}
+                    <td>
+                        {% if products.number == i %}
+                        <span class="active">{{ i }} <span class="sr-only">(current)</span></span>
+                        {% else %}
+                        <a href="?page={{ i }}">{{ i }}</a>
+                    </td>
+                    {% endif %}
+                    {% endfor %}
+                    <td>
+                        {% if products.has_next %}
+                        <a href="?page={{ products.next_page_number }}">&raquo;</a>
+                        {% else %}
+                        <span class="disabled"><span>&raquo;</span></span>
+                        {% endif %}
+                    </td>
+                </ul>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+</body>
+</html>
