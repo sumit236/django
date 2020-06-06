@@ -1,7 +1,7 @@
 appdirs==1.4.3
 asgiref==3.2.5
 distlib==0.3.0
-Django==2.0.1
+Django==2.2.13
 filelock==3.0.12
 get==2019.4.13
 gunicorn==19.7.1
